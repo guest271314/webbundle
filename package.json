@@ -1,0 +1,10 @@
+{
+  "name": "webbundle",
+  "version": "0.0.1",
+  "description": "Generate Signed Web Bundle",
+  "license": "Apache-2.0",
+  "dependencies": {    
+    "wbn": "^0.0.9",
+    "wbn-sign": "^0.1.2"
+  }
+}
