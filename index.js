@@ -10,10 +10,6 @@ const headers = {
   "cross-origin-resource-policy": "same-origin",
 };
 
-const setHeader = (contentType) => {
-  return new Headers({ "content-type": contentType, ...headers });
-};
-
 const privateKey = wbnSign.parsePemKey(
   fs.readFileSync("ed25519key.pem", "utf-8"),
 );
