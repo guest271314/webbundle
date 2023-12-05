@@ -3,8 +3,19 @@
   "version": "0.0.1",
   "description": "Generate Signed Web Bundle",
   "license": "WTFPLv2",
-  "dependencies": {    
-    "wbn": "^0.0.9",
-    "wbn-sign": "^0.1.2"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guest271314/webbundle"
+  },
+  "dependencies": {
+    "webbundle-webpack-plugin": "0.1.3",
+    "webpack": "^5.76.0",
+    "webpack-cli": "^4.9.2",
+    "copy-webpack-plugin": "^11.0.0",
+    "html-loader": "^3.1.0",
+    "html-webpack-plugin": "^5.5.0"
+  },
+  "scripts": {
+    "build": "webpack --config webpack.wbn.js",
   }
 }
