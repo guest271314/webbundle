@@ -28,19 +28,7 @@ Entry point is `src` directory, main script is `script.js`.
 Build the Signed Web Bundle
 
 ```
-npm run build
-```
-
-or 
-
-```
-bun run build
-```
-
-which executes 
-
-```
-webpack --config webpack.wbn.js
+node webpack.wbn.js
 ```
 
 # W.I.P.
