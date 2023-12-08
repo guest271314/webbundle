@@ -14,43 +14,33 @@
  * limitations under the License.
  */
 
+const webpack = require("webpack");
 const WebBundlePlugin = require("webbundle-webpack-plugin");
 const { WebBundleId, parsePemKey } = require("wbn-sign");
 const { merge } = require("webpack-merge");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const privateKeyFile = "ed25519key.pem";
-let privateKey;
-if (process.env.ED25519KEY) {
-  privateKey = process.env.ED25519KEY;
-} else if (fs.existsSync(privateKeyFile)) {
-  privateKey = fs.readFileSync(privateKeyFile);
-}
+const privateKey = fs.readFileSync(privateKeyFile);
+const parsedPrivateKey = parsePemKey(privateKey);
+const baseURL = new WebBundleId(
+  parsedPrivateKey,
+).serializeWithIsolatedWebAppOrigin();
 
-let webBundlePlugin;
-if (privateKey) {
-  const parsedPrivateKey = parsePemKey(privateKey);
+console.log(baseURL);
 
-  webBundlePlugin = new WebBundlePlugin({
-    baseURL: new WebBundleId(
-      parsedPrivateKey,
-    ).serializeWithIsolatedWebAppOrigin(),
-    output: "signed.swbn",
-    integrityBlockSign: {
-      key: parsedPrivateKey,
-    },
-  });
-} else {
-  webBundlePlugin = new WebBundlePlugin({
-    baseURL: "/",
-    output: "signed.wbn",
-  });
-}
+const webBundlePlugin = new WebBundlePlugin({
+  baseURL,
+  output: "signed.swbn",
+  integrityBlockSign: {
+    key: parsedPrivateKey,
+  },
+});
 
-module.exports = {
+webpack({
   entry: "./src/script.js",
   module: {
     rules: [
@@ -82,4 +72,9 @@ module.exports = {
       policyName: "webbundle#webpack",
     },
   },
-};
+}, (err, stats) => {
+  if (err || stats.hasErrors()) {
+    console.log(err);
+  }
+  console.log(stats.compilation.assets);
+});
