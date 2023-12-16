@@ -40,7 +40,7 @@ node webpack.wbn.js
 Build the Signed Web Bundle using Rollup
 
 ```
-node rollup.wbn.js
+node --experimental-default-type=module rollup.wbn.js
 ```
 
 # W.I.P.
