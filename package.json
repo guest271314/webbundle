@@ -8,14 +8,21 @@
     "url": "https://github.com/guest271314/webbundle"
   },
   "dependencies": {
-    "webbundle-webpack-plugin": "^0.1.3",
+    "webbundle-webpack-plugin": "0.1.3",
     "webpack": "^5.76.0",
     "webpack-cli": "^4.9.2",
     "copy-webpack-plugin": "^11.0.0",
     "html-loader": "^3.1.0",
-    "html-webpack-plugin": "^5.5.0"
+    "html-webpack-plugin": "^5.5.0",
+    "mime": "^2.4.4",
+    "zod": "^3.21.4",
+    "esbuild": "^0.17.15",
+    "rollup": "^2.76.0"
   },
   "scripts": {
-    "build": "webpack --config webpack.wbn.js",
+    "start": "webpack serve --config webpack.dev.js",
+    "build-webpack": "webpack --config webpack.wbn.js",
+    "build-rollup": "rm -rf lib && esbuild --bundle --packages=external --format=esm --outfile=lib/index.js src/index.ts --platform=node --legal-comments=inline --sourcemap --keep-names",
+    "lint": "eslint src/*.ts"
   }
 }
