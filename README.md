@@ -31,13 +31,13 @@ Compile `src/index.ts` into a module for Rollup usage
 bun run build-rollup
 ```
 
-Build the Signed Web Bundle using Webpack
+Build the Signed Web Bundle using Webpack. Move `index.html` to `src` directory for Webpack. Remove `<script src="script.js">` from the HTML.
 
 ```
 node webpack.wbn.js
 ```
 
-Build the Signed Web Bundle using Rollup
+Build the Signed Web Bundle using Rollup. Move `index.html` to `assets` directory for Rollup. Include `<script src="script.js">` in the HTML.
 
 ```
 node --experimental-default-type=module rollup.wbn.js
