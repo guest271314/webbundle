@@ -1,4 +1,4 @@
-import wbnOutputPlugin from "./lib/index.js";
+import * as esbuild from "esbuild";
 import * as wbnSign from "wbn-sign";
 import * as rollup from "rollup";
 import * as fs from "node:fs";
@@ -7,6 +7,19 @@ import * as path from "node:path";
 const privateKeyFile = "ed25519key.pem";
 const privateKey = fs.readFileSync(privateKeyFile);
 
+await esbuild.build({
+  entryPoints: ["src/index.ts"],
+  platform: "node",
+  outfile: "wbn-bundle.js",
+  format: "esm",
+  packages: "external",
+  sourcemap: true,
+  bundle: true,
+  keepNames: true,
+});
+
+const {default: wbnOutputPlugin} = await import("./wbn-bundle.js");
+
 const build = async () => {
   const key = wbnSign.parsePemKey(
     privateKey
@@ -14,7 +27,6 @@ const build = async () => {
 
   const bundle = await rollup.rollup({
     input: "./src/script.js",
-    output: { dir: "dist", format: "esm" },
     plugins: [
       wbnOutputPlugin({
         baseURL: new wbnSign.WebBundleId(
