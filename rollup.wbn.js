@@ -3,8 +3,14 @@ import * as wbnSign from "wbn-sign";
 import * as rollup from "rollup";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import * as util from "node:util";
+import { exec } from "node:child_process";
 
-const privateKeyFile = "ed25519key.pem";
+const execAsync = util.promisify(exec);
+const generateKeyCommand =
+  `openssl genpkey -algorithm ed25519 -out private.pem`;
+const { stderr } = await execAsync(generateKeyCommand);
+const privateKeyFile = "private.pem";
 const privateKey = fs.readFileSync(privateKeyFile);
 
 await esbuild.build({
@@ -19,13 +25,12 @@ await esbuild.build({
   keepNames: true,
 });
 
-const {default: wbnOutputPlugin} = await import("./wbn-bundle.js");
+const { default: wbnOutputPlugin } = await import("./wbn-bundle.js");
 
 const build = async () => {
   const key = wbnSign.parsePemKey(
-    privateKey
+    privateKey,
   );
-
   const bundle = await rollup.rollup({
     input: "./src/script.js",
     plugins: [
@@ -49,11 +54,11 @@ const build = async () => {
     ],
   });
 
-  const { output } = await bundle.generate({ format: 'esm' });
+  const { output } = await bundle.generate({ format: "esm" });
   const [{ fileName, source }] = output;
   fs.writeFileSync(fileName, source);
-  return { fileName, source }
+  return { fileName, source };
 };
 
 build()
-.then(console.log).catch(console.error);
+  .then(console.log).catch(console.error);
