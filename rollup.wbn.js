@@ -13,6 +13,7 @@ await esbuild.build({
   outfile: "wbn-bundle.js",
   format: "esm",
   packages: "external",
+  legalComments: "inline",
   sourcemap: true,
   bundle: true,
   keepNames: true,
