@@ -55,7 +55,7 @@ const build = async () => {
         static: { dir: "assets" },
         output: "signed.swbn",
         integrityBlockSign: {
-          strategy: strategy: new CustomSigningStrategy(), // new wbnSign.NodeCryptoSigningStrategy(key),
+          strategy: new CustomSigningStrategy(), // new wbnSign.NodeCryptoSigningStrategy(key),
         },
         headerOverride: {
           "cross-origin-embedder-policy": "require-corp",
