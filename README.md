@@ -15,7 +15,13 @@ or
 npm install
 ```
 
-Generate `.pem` file
+or 
+
+```
+deno run -A deno-install-node-modules.js
+```
+
+Generate `.pem` file. Currently dynamically generated in `rollup.wbn.js`
 
 ```
 openssl genpkey -algorithm Ed25519 -out ed25519key.pem
