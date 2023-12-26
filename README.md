@@ -37,7 +37,7 @@ Navigate to `chrome://web-app-internals/`, click `Select file...` and select `si
 
 # W.I.P.
 
-`test.js` is a work in progress to use only `wbn` and `wbn-sign` packages to build the Signed Web Bundle and Isolated Web App, without using Rollup.
+`test-wbn-sign-standalone.js` is a work in progress to use only `wbn` and `wbn-sign` packages to build the Signed Web Bundle and Isolated Web App, without using Rollup.
 
 # TODO
 
