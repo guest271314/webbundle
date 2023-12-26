@@ -31,6 +31,20 @@ const build = async () => {
   const key = wbnSign.parsePemKey(
     privateKey,
   );
+  // https://github.com/GoogleChromeLabs/webbundle-plugins/blob/d251f6efbdb41cf8d37b9b7c696fd5c795cdc231/packages/rollup-plugin-webbundle/test/test.js#L408
+  // wbn-sign/lib/signers/node-crypto-signing-strategy.js
+  class CustomSigningStrategy {
+    async sign(data) {
+      return crypto.sign(
+        /*algorithm=*/ undefined,
+        data,
+        key,
+      );
+    }
+    async getPublicKey() {
+      return crypto.createPublicKey(key);
+    }
+  }
   const bundle = await rollup.rollup({
     input: "./src/script.js",
     plugins: [
@@ -41,7 +55,7 @@ const build = async () => {
         static: { dir: "assets" },
         output: "signed.swbn",
         integrityBlockSign: {
-          strategy: new wbnSign.NodeCryptoSigningStrategy(key),
+          strategy: strategy: new CustomSigningStrategy(), // new wbnSign.NodeCryptoSigningStrategy(key),
         },
         headerOverride: {
           "cross-origin-embedder-policy": "require-corp",
