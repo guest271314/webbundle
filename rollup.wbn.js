@@ -4,6 +4,7 @@ import * as rollup from "rollup";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as util from "node:util";
+import * as crypto from "node:crypto";
 import { exec } from "node:child_process";
 
 const execAsync = util.promisify(exec);
