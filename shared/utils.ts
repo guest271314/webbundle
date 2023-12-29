@@ -123,7 +123,7 @@ export async function getSignedWebBundle(
     opts.integrityBlockSign.strategy
   ).sign();
 
-  const origin = new WebBundleId(
+  const origin = await new WebBundleId(
     await opts.integrityBlockSign.strategy.getPublicKey()
   ).serializeWithIsolatedWebAppOrigin();
 
