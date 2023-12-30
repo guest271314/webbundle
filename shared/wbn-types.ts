@@ -16,7 +16,7 @@
 
 // These must match with the types in `wbn`.
 // github.com/WICG/webpackage/blob/main/js/bundle/src/constants.ts
-const B1 = 'b1';
-const B2 = 'b2';
+const B1 = "b1";
+const B2 = "b2";
 const APPROVED_VERSIONS = [B1, B2] as const;
 export type FormatVersion = typeof APPROVED_VERSIONS[number];

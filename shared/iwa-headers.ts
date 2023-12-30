@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { Headers } from './types';
+import { Headers } from "./types";
 
 export const coep: Headers = Object.freeze({
-  'cross-origin-embedder-policy': 'require-corp',
+  "cross-origin-embedder-policy": "require-corp",
 });
 export const coop: Headers = Object.freeze({
-  'cross-origin-opener-policy': 'same-origin',
+  "cross-origin-opener-policy": "same-origin",
 });
 export const corp: Headers = Object.freeze({
-  'cross-origin-resource-policy': 'same-origin',
+  "cross-origin-resource-policy": "same-origin",
 });
 
-export const CSP_HEADER_NAME = 'content-security-policy';
+export const CSP_HEADER_NAME = "content-security-policy";
 export const csp: Headers = Object.freeze({
   [CSP_HEADER_NAME]:
     "base-uri 'none'; default-src 'self'; object-src 'none'; frame-src 'self' https: blob: data:; connect-src 'self' https: wss:; script-src 'self' 'wasm-unsafe-eval'; img-src 'self' https: blob: data:; media-src 'self' https: blob: data:; font-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; require-trusted-types-for 'script'; frame-ancestors 'self';",
@@ -61,27 +61,33 @@ export function checkAndAddIwaHeaders(headers: Headers) {
   const lowerCaseHeaders = headerNamesToLowerCase(headers);
 
   // Add missing IWA headers.
-  for (const [iwaHeaderName, iwaHeaderValue] of Object.entries(
-    iwaHeaderDefaults
-  )) {
+  for (
+    const [iwaHeaderName, iwaHeaderValue] of Object.entries(
+      iwaHeaderDefaults,
+    )
+  ) {
     if (!lowerCaseHeaders[iwaHeaderName]) {
       console.log(
-        `For Isolated Web Apps, ${iwaHeaderName} header was automatically set to ${iwaHeaderValue}. ${ifNotIwaMsg}`
+        `For Isolated Web Apps, ${iwaHeaderName} header was automatically set to ${iwaHeaderValue}. ${ifNotIwaMsg}`,
       );
       headers[iwaHeaderName] = iwaHeaderValue;
     }
   }
 
   // Check strictness of IWA headers (apart from special case `Content-Security-Policy`).
-  for (const [iwaHeaderName, iwaHeaderValue] of Object.entries(
-    invariableIwaHeaders
-  )) {
+  for (
+    const [iwaHeaderName, iwaHeaderValue] of Object.entries(
+      invariableIwaHeaders,
+    )
+  ) {
     if (
       lowerCaseHeaders[iwaHeaderName] &&
       lowerCaseHeaders[iwaHeaderName].toLowerCase() !== iwaHeaderValue
     ) {
       throw new Error(
-        `For Isolated Web Apps ${iwaHeaderName} should be ${iwaHeaderValue}. Now it is ${headers[iwaHeaderName]}. ${ifNotIwaMsg}`
+        `For Isolated Web Apps ${iwaHeaderName} should be ${iwaHeaderValue}. Now it is ${
+          headers[iwaHeaderName]
+        }. ${ifNotIwaMsg}`,
       );
     }
   }

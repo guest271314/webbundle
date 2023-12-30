@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "esbuild": "^0.17.15",
-    "mime": "^2.4.4",
     "rollup": "^2.76.0",
+    "mime": "^2.4.4",
     "zod": "^3.21.4",
+    "base32-encode": "^2.0.0",
     "wbn": "^0.0.9",
-    "wbn-sign": "^0.1.2",
-    "base32-encode": "^2.0.0"
+    "wbn-sign-webcrypto": "https://github.com/guest271314/wbn-sign-webcrypto.git"
   }
 }

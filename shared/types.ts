@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { KeyObject } from 'crypto';
-import * as z from 'zod';
+import { KeyObject } from "node:crypto";
+import * as z from "zod";
 // TODO(sonkkeli: b/282899095): This should get fixed whenever we use a more
 // modern test framework like Jest.
-import { checkAndAddIwaHeaders, iwaHeaderDefaults } from './iwa-headers.js';
+import { checkAndAddIwaHeaders, iwaHeaderDefaults } from "./iwa-headers.js";
 import {
-  NodeCryptoSigningStrategy,
   ISigningStrategy,
+  NodeCryptoSigningStrategy,
   WebBundleId,
-} from 'wbn-sign';
+} from "wbn-sign-webcrypto";
 
 const headersSchema = z.record(z.string());
 
@@ -36,9 +36,9 @@ const baseOptionsSchema = z.strictObject({
       baseURL: z.string().optional(),
     })
     .optional(),
-  baseURL: z.string().default(''),
-  output: z.string().default('out.wbn'),
-  formatVersion: z.enum(['b1', 'b2']).default('b2'),
+  baseURL: z.string().default(""),
+  output: z.string().default("out.wbn"),
+  formatVersion: z.enum(["b1", "b2"]).default("b2"),
   headerOverride: z
     .union([z.function().returns(headersSchema), headersSchema])
     .optional(),
@@ -62,7 +62,6 @@ const keyBasedIntegrityBlockSignSchema = baseIntegrityBlockSignSchema
         message: `Key must be an instance of "KeyObject"`,
       }),
   })
-
   // Use the default NodeCryptoSigningStrategy strategy instead of key.
   .transform((ibSignOpts) => {
     return {
@@ -71,42 +70,41 @@ const keyBasedIntegrityBlockSignSchema = baseIntegrityBlockSignSchema
     };
   });
 
-const strategyBasedIntegrityBlockSignSchema =
-  baseIntegrityBlockSignSchema.extend({
+const strategyBasedIntegrityBlockSignSchema = baseIntegrityBlockSignSchema
+  .extend({
     strategy: z.instanceof(Object).refine(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (strategy: Record<string, any>): strategy is ISigningStrategy => {
-        return ['getPublicKey', 'sign'].every(
-          (func) => func in strategy && typeof strategy[func] === 'function'
+        return ["getPublicKey", "sign"].every(
+          (func) => func in strategy && typeof strategy[func] === "function",
         );
       },
-      { message: `Strategy must implement "ISigningStrategy"` }
+      { message: `Strategy must implement "ISigningStrategy"` },
     ),
   });
 
 const signingSchema = baseOptionsSchema
   .extend({
     integrityBlockSign: keyBasedIntegrityBlockSignSchema.or(
-      strategyBasedIntegrityBlockSignSchema
+      strategyBasedIntegrityBlockSignSchema,
     ),
   })
-
   // Check that `baseURL` is either not set, or set to the expected origin based
   // on the private key.
   .superRefine(async (opts, ctx) => {
     const publicKey = await opts.integrityBlockSign.strategy.getPublicKey();
-    const expectedOrigin = new WebBundleId(
-      publicKey
+    const expectedOrigin = await new WebBundleId(
+      publicKey,
     ).serializeWithIsolatedWebAppOrigin();
 
-    if (opts.baseURL !== '' && opts.baseURL !== expectedOrigin) {
+    if (opts.baseURL !== "" && opts.baseURL !== expectedOrigin) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `The provided "baseURL" option (${opts.baseURL}) does not match the expected base URL (${expectedOrigin}) derived from the public key.`,
+        message:
+          `The provided "baseURL" option (${opts.baseURL}) does not match the expected base URL (${expectedOrigin}) derived from the public key.`,
       });
     }
   })
-
   // Set and validate the `headerOverride` option.
   .transform((opts, ctx) => {
     if (!opts.integrityBlockSign.isIwa) {
@@ -115,12 +113,14 @@ const signingSchema = baseOptionsSchema
 
     if (opts.headerOverride === undefined) {
       console.info(
-        `Setting the empty headerOverrides to IWA defaults. To bundle a non-IWA, set \`integrityBlockSign { isIwa: false }\` in your plugin configs. Defaults are set to:\n ${JSON.stringify(
-          iwaHeaderDefaults
-        )}`
+        `Setting the empty headerOverrides to IWA defaults. To bundle a non-IWA, set \`integrityBlockSign { isIwa: false }\` in your plugin configs. Defaults are set to:\n ${
+          JSON.stringify(
+            iwaHeaderDefaults,
+          )
+        }`,
       );
       opts.headerOverride = iwaHeaderDefaults;
-    } else if (typeof opts.headerOverride === 'object') {
+    } else if (typeof opts.headerOverride === "object") {
       try {
         checkAndAddIwaHeaders(opts.headerOverride);
       } catch (err) {

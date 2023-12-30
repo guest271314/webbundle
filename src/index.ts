@@ -81,11 +81,7 @@ export default function wbnOutputPlugin(
       this.emitFile({
         fileName: opts.output,
         type: "asset",
-        source: Buffer.from(
-          webBundle,
-          webBundle.byteOffset,
-          webBundle.byteLength,
-        ),
+        source: webBundle
       });
     },
   };

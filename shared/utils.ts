@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
-import mime from 'mime';
-import { combineHeadersForUrl, BundleBuilder } from 'wbn';
-import { IntegrityBlockSigner, WebBundleId } from 'wbn-sign';
-import { checkAndAddIwaHeaders } from './iwa-headers';
-import { ValidIbSignPluginOptions, ValidPluginOptions } from './types';
+import * as fs from "node:fs";
+import * as path from "node:path";
+import mime from "mime";
+import { BundleBuilder, combineHeadersForUrl } from "wbn";
+import { IntegrityBlockSigner, WebBundleId } from "wbn-sign-webcrypto";
+import { checkAndAddIwaHeaders } from "./iwa-headers";
+import { ValidIbSignPluginOptions, ValidPluginOptions } from "./types";
 
 // If the file name is 'index.html', create an entry for both baseURL/dir/ and
 // baseURL/dir/index.html which redirects to the aforementioned. Otherwise just
@@ -30,22 +30,22 @@ export function addAsset(
   baseURL: string,
   relativeAssetPath: string, // Asset's path relative to app's base dir. E.g. sub-dir/helloworld.js
   assetContentBuffer: Uint8Array | string,
-  pluginOptions: ValidPluginOptions
+  pluginOptions: ValidPluginOptions,
 ) {
   const parsedAssetPath = path.parse(relativeAssetPath);
-  const isIndexHtmlFile = parsedAssetPath.base === 'index.html';
+  const isIndexHtmlFile = parsedAssetPath.base === "index.html";
 
   // For object type, the IWA headers have already been check in constructor.
   const shouldCheckIwaHeaders =
-    typeof pluginOptions.headerOverride === 'function' &&
-    'integrityBlockSign' in pluginOptions &&
+    typeof pluginOptions.headerOverride === "function" &&
+    "integrityBlockSign" in pluginOptions &&
     pluginOptions.integrityBlockSign.isIwa;
 
   if (isIndexHtmlFile) {
     const combinedIndexHeaders = combineHeadersForUrl(
-      { Location: './' },
+      { Location: "./" },
       pluginOptions.headerOverride,
-      baseURL + relativeAssetPath
+      baseURL + relativeAssetPath,
     );
     if (shouldCheckIwaHeaders) checkAndAddIwaHeaders(combinedIndexHeaders);
 
@@ -53,19 +53,19 @@ export function addAsset(
       baseURL + relativeAssetPath,
       301,
       combinedIndexHeaders,
-      '' // Empty content.
+      "", // Empty content.
     );
   }
 
-  const baseURLWithAssetPath =
-    baseURL + (isIndexHtmlFile ? parsedAssetPath.dir : relativeAssetPath);
+  const baseURLWithAssetPath = baseURL +
+    (isIndexHtmlFile ? parsedAssetPath.dir : relativeAssetPath);
   const combinedHeaders = combineHeadersForUrl(
     {
-      'Content-Type':
-        mime.getType(relativeAssetPath) || 'application/octet-stream',
+      "Content-Type": mime.getType(relativeAssetPath) ||
+        "application/octet-stream",
     },
     pluginOptions.headerOverride,
-    baseURLWithAssetPath
+    baseURLWithAssetPath,
   );
   if (shouldCheckIwaHeaders) checkAndAddIwaHeaders(combinedHeaders);
 
@@ -73,7 +73,7 @@ export function addAsset(
     baseURLWithAssetPath,
     200,
     combinedHeaders,
-    assetContentBuffer
+    assetContentBuffer,
   );
 }
 
@@ -82,7 +82,7 @@ export function addFilesRecursively(
   baseURL: string,
   dir: string,
   pluginOptions: ValidPluginOptions,
-  recPath = ''
+  recPath = "",
 ) {
   const files = fs.readdirSync(dir);
   files.sort(); // Sort entries for reproducibility.
@@ -96,7 +96,7 @@ export function addFilesRecursively(
         baseURL,
         filePath,
         pluginOptions,
-        recPath + fileName + '/'
+        recPath + fileName + "/",
       );
     } else {
       const fileContent = fs.readFileSync(filePath);
@@ -107,7 +107,7 @@ export function addFilesRecursively(
         baseURL,
         recPath + fileName,
         fileContent,
-        pluginOptions
+        pluginOptions,
       );
     }
   }
@@ -116,15 +116,15 @@ export function addFilesRecursively(
 export async function getSignedWebBundle(
   webBundle: Uint8Array,
   opts: ValidIbSignPluginOptions,
-  infoLogger: (str: string) => void
+  infoLogger: (str: string) => void,
 ): Promise<Uint8Array> {
   const { signedWebBundle } = await new IntegrityBlockSigner(
     webBundle,
-    opts.integrityBlockSign.strategy
+    opts.integrityBlockSign.strategy,
   ).sign();
 
   const origin = await new WebBundleId(
-    await opts.integrityBlockSign.strategy.getPublicKey()
+    await opts.integrityBlockSign.strategy.getPublicKey(),
   ).serializeWithIsolatedWebAppOrigin();
 
   infoLogger(origin);
