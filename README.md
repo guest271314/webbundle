@@ -15,13 +15,6 @@ or
 npm install
 ```
 
-or 
-
-```
-deno run -A deno_install.js
-```
-
-
 Entry point is `src` directory, main script is `script.js`.
 
 `assets` directory contains `manifest.webmanifest`, `index.html` and any other scripts or resources to be bundled.
@@ -40,11 +33,6 @@ Bun
 bun run rollup.wbn.js
 ```
 
-Deno
-```
-deno run --unstable-byonm -A rollup.wbn.js
-```
-
 # Install Isolated Web App using Signed Web Bundle
 
 Navigate to `chrome://web-app-internals/`, click `Select file...` and select `signed.swbn`.
@@ -52,9 +40,8 @@ Navigate to `chrome://web-app-internals/`, click `Select file...` and select `si
 # TODO
 
 - This should work in the browser.
-
+- Install and run using `deno`. Keep `deno run -A deno_install.js` in the repository until that is done.
 - Install [`wbn-sign-webcrypto`](https://github.com/guest271314/wbn-sign-webcrypto) dependency from GitHub repository using `deno`. Completed.
-
 - Substitute Web Cryptography API for `node:crypto`. Completed.
 
 
