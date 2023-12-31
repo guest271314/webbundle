@@ -26,6 +26,7 @@ await esbuild.build({
   sourcemap: true,
   bundle: true,
   keepNames: true,
+  allowOverwrite: true
 });
 
 const { default: wbnOutputPlugin} = await import("./wbn-bundle.js");
