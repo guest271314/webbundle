@@ -26,7 +26,7 @@ Write `signed.swbn` to current directory
 
 Node.js 
 ```
-node --experimental-default-type=module rollup.wbn.js
+node --experimental-default-type=module --trace-warnings rollup.wbn.js
 ```
 
 Bun
