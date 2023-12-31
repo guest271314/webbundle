@@ -1,6 +1,6 @@
 import * as esbuild from "esbuild";
-import * as wbnSign from "wbn-sign-webcrypto";
 import * as rollup from "rollup";
+import * as wbnSign from "wbn-sign-webcrypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as crypto from "node:crypto";
@@ -28,7 +28,8 @@ await esbuild.build({
   keepNames: true,
 });
 
-import wbnOutputPlugin from "./wbn-bundle.js";
+const { default: wbnOutputPlugin} = await import("./wbn-bundle.js");
+
 const build = async () => {
   /*
   const key = parsePemKey(
