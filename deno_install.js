@@ -1,4 +1,4 @@
-import "npm:esbuild";
+import * as esbuild from "npm:esbuild";
 import "npm:rollup";
 import "npm:wbn";
 import "npm:zod";
@@ -28,3 +28,20 @@ const { code, stdout, stderr } = await installRepositoryFromGitHubToNodeModules(
 );
 
 console.log([stdout, stderr].map((result) => decoder.decode(result)));
+
+await esbuild.build({
+  entryPoints: ["src/index.ts"],
+  platform: "node",
+  outfile: "wbn-bundle.js",
+  format: "esm",
+  packages: "external",
+  legalComments: "inline",
+  sourcemap: true,
+  bundle: true,
+  keepNames: true,
+  write: true,
+});
+
+try {
+  await import("./wbn-bundle.js");
+} catch {}
