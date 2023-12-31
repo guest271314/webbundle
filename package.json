@@ -1,6 +1,6 @@
 {
   "name": "webbundle",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Generate Signed Web Bundle",
   "license": "WTFPLv2",
   "repository": {
