@@ -53,7 +53,7 @@ Navigate to `chrome://web-app-internals/`, click `Select file...` and select `si
 
 - This should work in the browser.
 
-- Install [`wbn-sign-webcrypto`](https://github.com/guest271314/wbn-sign-webcrypto) dependency from GitHub repository using `deno`.
+- Install [`wbn-sign-webcrypto`](https://github.com/guest271314/wbn-sign-webcrypto) dependency from GitHub repository using `deno`. Completed.
 
 - Substitute Web Cryptography API for `node:crypto`. Completed.
 
