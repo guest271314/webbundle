@@ -15,6 +15,12 @@ or
 npm install
 ```
 
+or 
+
+```
+deno run -A deno_install.js
+```
+
 
 Entry point is `src` directory, main script is `script.js`.
 
