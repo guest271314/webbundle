@@ -43,7 +43,7 @@ Deno
 ```
 deno run --unstable-byonm -A rollup.wbn.js
 ```
-Note: `deno run --unstable-byonm -A rollup.wbn.js` currently needs to be run twice to generate `signed.swbn`; the first time a module not found error is thrown for the dynamic bundle import `const { default: wbnOutputPlugin} = await import("./wbn-bundle.js")` in `rollup.wbn.js`.
+Note: `deno run --unstable-byonm -A rollup.wbn.js` currently needs to be run twice to generate `signed.swbn`; the first time a module not found error is thrown for the dynamic bundle import of `./wbn-bundle.js` in `rollup.wbn.js`.
 
 # Install Isolated Web App using Signed Web Bundle
 
