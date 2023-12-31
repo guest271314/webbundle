@@ -43,7 +43,6 @@ Deno
 ```
 deno run --unstable-byonm -A rollup.wbn.js
 ```
-Note: `deno run --unstable-byonm -A rollup.wbn.js` currently needs to be run twice to generate `signed.swbn`; the first time a module not found error is thrown for the dynamic bundle import of `./wbn-bundle.js` in `rollup.wbn.js`.
 
 # Install Isolated Web App using Signed Web Bundle
 
@@ -52,7 +51,7 @@ Navigate to `chrome://web-app-internals/`, click `Select file...` and select `si
 # TODO
 
 - This should work in the browser.
-- Install and run using `deno` without needing to run `deno run --unstable-byonm -A rollup.wbn.js` twice, the first run throwing module not found error for dynamic import of bundle `wbn-bundle.js`.
+- Install and run using `deno` without needing to run import the dynamically created bundle `wbn-bundle.js` twice; the first run throwing module not found error. For now generate and import the bundle twice; the first dynamic import in `deno_install.js`, catching the error, to avoid the error for first run being thrown in `rollup.wbn.js` which generates the `signed.swbn` file.
 - Install [`wbn-sign-webcrypto`](https://github.com/guest271314/wbn-sign-webcrypto) dependency from GitHub repository using `deno`. Completed.
 - Substitute Web Cryptography API for `node:crypto`. Completed.
 
