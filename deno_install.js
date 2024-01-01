@@ -1,4 +1,4 @@
-import * as esbuild from "npm:esbuild";
+import "npm:esbuild";
 import "npm:rollup";
 import "npm:wbn";
 import "npm:zod";
@@ -8,7 +8,7 @@ import "npm:base32-encode";
 const decoder = new TextDecoder();
 // Download GitHub repository to node_modules/.deno, link in node_modules
 async function installRepositoryFromGitHubToNodeModules(url) {
-  return new Deno.Command("/bin/bash", {
+  return new Deno.Command("/bin/sh", {
   /*
     cd node_modules/.deno
     git clone "$1"
@@ -28,20 +28,3 @@ const { code, stdout, stderr } = await installRepositoryFromGitHubToNodeModules(
 );
 
 console.log([stdout, stderr].map((result) => decoder.decode(result)));
-
-await esbuild.build({
-  entryPoints: ["src/index.ts"],
-  platform: "node",
-  outfile: "wbn-bundle.js",
-  format: "esm",
-  packages: "external",
-  legalComments: "inline",
-  sourcemap: true,
-  bundle: true,
-  keepNames: true,
-  write: true,
-});
-
-try {
-  await import("./wbn-bundle.js");
-} catch {}
