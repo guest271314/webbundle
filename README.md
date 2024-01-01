@@ -51,7 +51,7 @@ Navigate to `chrome://web-app-internals/`, click `Select file...` and select `si
 # TODO
 
 - This should work in the browser.
-- Install and run using `deno` without needing to run import the dynamically created bundle `wbn-bundle.js` twice; the first run throwing module not found error. For now generate and import the bundle twice; the first dynamic import in `deno_install.js`, catching the error, to avoid the error for first run being thrown in `rollup.wbn.js` which generates the `signed.swbn` file.
+- Install and run using `deno` without needing to run import the dynamically created bundle `wbn-bundle.js` twice; the first run throwing module not found error. For now generate and import the bundle twice; the first dynamic import in `deno_install.js`, catching the error, to avoid the error for first run being thrown in `rollup.wbn.js` which generates the `signed.swbn` file. Completed (see [this commit](https://github.com/guest271314/webbundle/commit/1623ecb09d12464234f2b17d888e66f652acdb07)).
 - Install [`wbn-sign-webcrypto`](https://github.com/guest271314/wbn-sign-webcrypto) dependency from GitHub repository using `deno`. Completed.
 - Substitute Web Cryptography API for `node:crypto`. Completed.
 
