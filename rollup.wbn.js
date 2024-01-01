@@ -29,7 +29,11 @@ await esbuild.build({
   allowOverwrite: true
 });
 
-const { default: wbnOutputPlugin} = await import("./wbn-bundle.js");
+// "" + "/path" and "/path" + "": Deno-specific workaround to avoid module not found error
+// https://www.reddit.com/r/Deno/comments/18unb03/comment/kfsszsw/
+// https://github.com/denoland/deno/issues/20945
+// https://github.com/denoland/deno/issues/17697#issuecomment-1486509016
+const { default: wbnOutputPlugin} = await import("./wbn-bundle.js" + "");
 
 const build = async () => {
   /*
