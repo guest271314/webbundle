@@ -16,10 +16,13 @@ const cryptoKey = await webcrypto.subtle.generateKey(
   ["sign", "verify"],
 );
 
+// Deno-specific workaround for dynamic imports. Same path is used twice below.
+const dynamicImport = "./wbn-bundle.js";
+
 await esbuild.build({
   entryPoints: ["src/index.ts"],
   platform: "node",
-  outfile: "wbn-bundle.js",
+  outfile: dynamicImport,
   format: "esm",
   packages: "external",
   legalComments: "inline",
@@ -33,7 +36,8 @@ await esbuild.build({
 // https://www.reddit.com/r/Deno/comments/18unb03/comment/kfsszsw/
 // https://github.com/denoland/deno/issues/20945
 // https://github.com/denoland/deno/issues/17697#issuecomment-1486509016
-const { default: wbnOutputPlugin} = await import("./wbn-bundle.js" + "");
+// https://deno.com/blog/v1.33#fewer-permission-checks-for-dynamic-imports
+const { default: wbnOutputPlugin } = await import(dynamicImport);
 
 const build = async () => {
   /*
