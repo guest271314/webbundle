@@ -1,5 +1,5 @@
 {
-  "name": "webbundle",
+  "name": "webbundle-webcrypto",
   "version": "0.1.0",
   "description": "Generate Signed Web Bundle with Web Cryptography API",
   "license": "WTFPLv2",
