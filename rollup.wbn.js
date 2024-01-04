@@ -70,8 +70,10 @@ const build = async () => {
           cryptoKey.publicKey,
         ).serializeWithIsolatedWebAppOrigin(),
         static: { dir: "assets" },
+        formatVersion: "b2",
         output: "signed.swbn",
         integrityBlockSign: {
+          isIwa: true,
           strategy: new CustomSigningStrategy(), // new wbnSign.NodeCryptoSigningStrategy(key),
         },     
         headerOverride: {
