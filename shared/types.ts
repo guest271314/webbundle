@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { KeyObject } from "node:crypto";
+// import { KeyObject } from "node:crypto";
 import * as z from "zod";
 // TODO(sonkkeli: b/282899095): This should get fixed whenever we use a more
 // modern test framework like Jest.
@@ -51,7 +51,7 @@ const nonSigningSchema = baseOptionsSchema.extend({
 const baseIntegrityBlockSignSchema = z.strictObject({
   isIwa: z.boolean().default(true),
 });
-
+/*
 const keyBasedIntegrityBlockSignSchema = baseIntegrityBlockSignSchema
   .extend({
     // Unfortunately we cannot use `KeyObject` directly within `instanceof()`,
@@ -69,7 +69,7 @@ const keyBasedIntegrityBlockSignSchema = baseIntegrityBlockSignSchema
       strategy: new NodeCryptoSigningStrategy(ibSignOpts.key),
     };
   });
-
+*/
 const strategyBasedIntegrityBlockSignSchema = baseIntegrityBlockSignSchema
   .extend({
     strategy: z.instanceof(Object).refine(
@@ -85,9 +85,9 @@ const strategyBasedIntegrityBlockSignSchema = baseIntegrityBlockSignSchema
 
 const signingSchema = baseOptionsSchema
   .extend({
-    integrityBlockSign: keyBasedIntegrityBlockSignSchema.or(
+    integrityBlockSign: // keyBasedIntegrityBlockSignSchema.or(
       strategyBasedIntegrityBlockSignSchema,
-    ),
+    // ),
   })
   // Check that `baseURL` is either not set, or set to the expected origin based
   // on the private key.
@@ -135,7 +135,7 @@ const signingSchema = baseOptionsSchema
 
 const optionsSchema = z.union([nonSigningSchema, signingSchema]);
 
-export const getValidatedOptionsWithDefaults = optionsSchema.parseAsync;
+// export const getValidatedOptionsWithDefaults = optionsSchema.parseAsync;
 
 export type PluginOptions = z.input<typeof optionsSchema>;
 
