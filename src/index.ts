@@ -22,7 +22,7 @@ import {
   getSignedWebBundle,
 } from "../shared/utils";
 import {
-  getValidatedOptionsWithDefaults,
+  // getValidatedOptionsWithDefaults,
   PluginOptions,
 } from "../shared/types";
 
@@ -44,7 +44,7 @@ export default function wbnOutputPlugin(
     enforce: "post",
 
     async generateBundle(_: OutputOptions, bundle): Promise<void> {
-      const opts = await getValidatedOptionsWithDefaults(rawOpts);
+      const opts = rawOpts; // await getValidatedOptionsWithDefaults(rawOpts);
 
       const builder = new BundleBuilder(opts.formatVersion);
       if ("primaryURL" in opts && opts.primaryURL) {
