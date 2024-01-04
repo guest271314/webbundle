@@ -88,6 +88,7 @@ const build = async () => {
   });
 
   const { output } = await bundle.generate({ format: "esm" });
+  await bundle.close();
   const [{ fileName, source }] = output;
   fs.writeFileSync(fileName, source);
   return `${fileName}, ${source.byteLength} bytes.`;
