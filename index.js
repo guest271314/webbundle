@@ -1,5 +1,5 @@
 import bundleIsolatedWebApp from "./wbn-bundle.js";
-import * as wbnSign from "wbn-sign-webcrypto";
+import { WebBundleId } from "wbn-sign-webcrypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as crypto from "node:crypto";
