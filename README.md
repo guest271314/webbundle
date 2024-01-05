@@ -21,9 +21,7 @@ or
 deno run -A deno_install.js
 ```
 
-Entry point is `src` directory, main script is `script.js`.
-
-`assets` directory contains `manifest.webmanifest`, `index.html` and any other scripts or resources to be bundled.
+Entry point is `assets` directory> contains `manifest.webmanifest`, `index.html`, and any other scripts or resources to be bundled. Main script is `script.js`.
 
 # Build the Signed Web Bundle and Isolated Web App using Rollup
 
@@ -31,22 +29,52 @@ Write `signed.swbn` to current directory
 
 Node.js 
 ```
-node --experimental-default-type=module rollup.wbn.js
+node --experimental-default-type=module index.js
 ```
 
 Bun
 ```
-bun run rollup.wbn.js
+bun run index.js
 ```
 
 Deno
 ```
-deno run --unstable-byonm -A rollup.wbn.js
+deno run --unstable-byonm -A index.js
 ```
 
 # Install Isolated Web App using Signed Web Bundle
 
 Navigate to `chrome://web-app-internals/`, click `Select file...` and select `signed.swbn`.
+
+# Dynamically build/rebuild `wbn-bundle.js` from `src/index.ts`
+
+```
+// import bundleIsolatedWebApp from "./wbn-bundle.js";
+import * as esbuild from "esbuild";
+
+// Deno-specific workaround for dynamic imports. 
+const dynamicImport = "./wbn-bundle.js";
+
+await esbuild.build({
+  entryPoints: ["src/index.ts"],
+  platform: "node",
+  outfile: dynamicImport,
+  format: "esm",
+  packages: "external",
+  legalComments: "inline",
+  sourcemap: true,
+  bundle: true,
+  keepNames: true,
+  allowOverwrite: true,
+});
+
+// "" + "/path" and "/path" + "": Deno-specific workaround to avoid module not found error
+// https://www.reddit.com/r/Deno/comments/18unb03/comment/kfsszsw/
+// https://github.com/denoland/deno/issues/20945
+// https://github.com/denoland/deno/issues/17697#issuecomment-1486509016
+// https://deno.com/blog/v1.33#fewer-permission-checks-for-dynamic-imports
+ const { default: bundleIsolatedWebApp } = await import(dynamicImport);
+```
 
 # TODO
 

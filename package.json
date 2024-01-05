@@ -9,9 +9,7 @@
   },
   "dependencies": {
     "base32-encode": "^2.0.0",
-    "esbuild": "^0.17.19",
     "mime": "^2.6.0",
-    "rollup": "^2.79.1",
     "wbn": "^0.0.9",
     "wbn-sign-webcrypto": "https://github.com/guest271314/wbn-sign-webcrypto.git",
     "zod": "^3.22.4"

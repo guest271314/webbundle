@@ -1,5 +1,3 @@
-import "npm:esbuild";
-import "npm:rollup";
 import "npm:wbn";
 import "npm:zod";
 import "npm:mime";
