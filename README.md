@@ -21,9 +21,9 @@ or
 deno run -A deno_install.js
 ```
 
-Entry point is `assets` directory> contains `manifest.webmanifest`, `index.html`, and any other scripts or resources to be bundled. Main script is `script.js`.
+Entry point is `assets` directory; contains `manifest.webmanifest`, `index.html`, `script.js` and any other scripts or resources to be bundled. 
 
-# Build the Signed Web Bundle and Isolated Web App using Rollup
+# Build the Signed Web Bundle and Isolated Web App
 
 Write `signed.swbn` to current directory
 
