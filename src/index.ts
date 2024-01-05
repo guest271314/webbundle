@@ -15,7 +15,6 @@
  */
 
 import { BundleBuilder } from "wbn";
-import { OutputOptions, Plugin } from "rollup";
 import {
   addAsset,
   addFilesRecursively,
@@ -34,55 +33,31 @@ function infoLogger(text: string): void {
 // TODO(sonkkeli): Probably this depends on the Rollup version. Figure out how
 // this should be refactored.
 // https://rollupjs.org/plugin-development/#build-hooks
-type EnforcedPlugin = Plugin & { enforce: "post" | "pre" | null };
+// type EnforcedPlugin = Plugin & { enforce: "post" | "pre" | null };
+export default async function bundleIsolatedWebApp(
+  opts: PluginOptions,
+): Promise<void> /*: EnforcedPlugin */ {
+  // const opts = await getValidatedOptionsWithDefaults(rawOpts);
+  const builder = new BundleBuilder(opts.formatVersion);
+  if ("primaryURL" in opts && opts.primaryURL) {
+    builder.setPrimaryURL(opts.primaryURL);
+  }
 
-export default function wbnOutputPlugin(
-  rawOpts: PluginOptions,
-): EnforcedPlugin {
+  if (opts.static) {
+    addFilesRecursively(
+      builder,
+      opts.static.baseURL ?? opts.baseURL,
+      opts.static.dir,
+      opts,
+    );
+  }
+
+  let webBundle = builder.createBundle();
+  if ("integrityBlockSign" in opts) {
+    webBundle = await getSignedWebBundle(webBundle, opts, infoLogger);
+  }
   return {
-    name: "wbn-output-plugin",
-    enforce: "post",
-
-    async generateBundle(_: OutputOptions, bundle): Promise<void> {
-      const opts = rawOpts; // await getValidatedOptionsWithDefaults(rawOpts);
-
-      const builder = new BundleBuilder(opts.formatVersion);
-      if ("primaryURL" in opts && opts.primaryURL) {
-        builder.setPrimaryURL(opts.primaryURL);
-      }
-
-      if (opts.static) {
-        addFilesRecursively(
-          builder,
-          opts.static.baseURL ?? opts.baseURL,
-          opts.static.dir,
-          opts,
-        );
-      }
-
-      for (const name of Object.keys(bundle)) {
-        const asset = bundle[name];
-        const content = asset.type === "asset" ? asset.source : asset.code;
-        addAsset(
-          builder,
-          opts.baseURL,
-          asset.fileName, // This contains the relative path to the base dir already.
-          content,
-          opts,
-        );
-        delete bundle[name];
-      }
-
-      let webBundle = builder.createBundle();
-      if ("integrityBlockSign" in opts) {
-        webBundle = await getSignedWebBundle(webBundle, opts, infoLogger);
-      }
-
-      this.emitFile({
-        fileName: opts.output,
-        type: "asset",
-        source: webBundle
-      });
-    },
+    fileName: opts.output,
+    source: webBundle,
   };
 }
