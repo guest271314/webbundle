@@ -68,11 +68,8 @@ await esbuild.build({
   allowOverwrite: true,
 });
 
-// "" + "/path" and "/path" + "": Deno-specific workaround to avoid module not found error
-// https://www.reddit.com/r/Deno/comments/18unb03/comment/kfsszsw/
 // https://github.com/denoland/deno/issues/20945
-// https://github.com/denoland/deno/issues/17697#issuecomment-1486509016
-// https://deno.com/blog/v1.33#fewer-permission-checks-for-dynamic-imports
+// "" + "/path" and "/path" + "": Deno-specific workaround to avoid module not found error
  const { default: bundleIsolatedWebApp } = await import(dynamicImport);
 ```
 
