@@ -1,3 +1,5 @@
+// Define Buffer for Deno when wbn-bundle.js is built with bun build
+globalThis.Buffer ??= (await import("node:buffer")).Buffer;
 import bundleIsolatedWebApp from "./wbn-bundle.js";
 import { WebBundleId } from "wbn-sign-webcrypto";
 import * as fs from "node:fs";
