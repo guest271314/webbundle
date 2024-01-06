@@ -46,7 +46,7 @@ deno run --unstable-byonm -A index.js
 
 Navigate to `chrome://web-app-internals/`, click `Select file...` and select `signed.swbn`.
 
-# Dynamically build/rebuild `wbn-bundle.js` from `src/index.ts` and run
+# Dynamically build/rebuild `wbn-bundle.js` from `src/index.ts` with `esbuild` and run
 
 ```
 // import bundleIsolatedWebApp from "./wbn-bundle.js";
