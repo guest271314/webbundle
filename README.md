@@ -76,7 +76,7 @@ await esbuild.build({
 # Build/rebuild `wbn-bundle.js` from `src/index.ts` with `bun`
 
 ```
-bun build ./src/index.ts --target=bun --format=esm --outfile=wbn-bundle.js
+bun build ./src/index.ts --target bun --format esm --outfile wbn-bundle.js -e cborg -e base32-encode --minify
 ```
 
 # TODO
