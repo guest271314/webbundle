@@ -73,6 +73,12 @@ await esbuild.build({
  const { default: bundleIsolatedWebApp } = await import(dynamicImport);
 ```
 
+# Build/rebuild `wbn-bundle.js` from `src/index.ts` with `bun`
+
+```
+bun build ./src/index.ts --target=bun --format=esm --outfile=wbn-bundle.js
+```
+
 # TODO
 
 - This should work in the browser.
