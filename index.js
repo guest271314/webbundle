@@ -7,15 +7,27 @@ import * as path from "node:path";
 import * as crypto from "node:crypto";
 const { webcrypto } = crypto;
 const algorithm = { name: "Ed25519" };
-
+const decoder = new TextDecoder();
 fs.writeFileSync("./assets/script.js", `resizeTo(400,300); console.log("Signed Web Bundle for Isolated Web App using ${navigator.userAgent}")`);
-
+const privateKey = fs.readFileSync("./privateKey.json");
+const publicKey = fs.readFileSync("./publicKey.json");
 // https://github.com/tQsW/webcrypto-curve25519/blob/master/explainer.md
-const cryptoKey = await webcrypto.subtle.generateKey(
-  algorithm.name,
-  true, /* extractable */
-  ["sign", "verify"],
-);
+const cryptoKey = {
+  privateKey: await webcrypto.subtle.importKey(
+    "jwk",
+    JSON.parse(decoder.decode(privateKey)),
+    algorithm.name,
+    true,
+    ["sign"],
+  ),
+  publicKey: await webcrypto.subtle.importKey(
+    "jwk",
+    JSON.parse(decoder.decode(publicKey)),
+    algorithm.name,
+    true,
+    ["verify"],
+  ),
+};
 
 const { fileName, source } = await bundleIsolatedWebApp({
   baseURL: await new WebBundleId(
