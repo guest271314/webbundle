@@ -91,7 +91,7 @@ try {
       outdir: ".",
       sourcemap: "external",
       splitting: false,
-      target: "node", // or "bun"
+      target: "bun" // or "node"
       format: "esm",
       // minify: true,
       external: ["mime", "base32-encode", "wbn-sign-webcrypto", "wbn"],
