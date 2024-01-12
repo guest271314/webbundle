@@ -15,10 +15,16 @@ or
 npm install
 ```
 
-or 
+or to create and populate `node_modules` folder with dependencies
 
 ```
 deno run -A deno_install.js
+```
+
+or to use network imports from esm.sh and github.com
+
+```
+deno run -A index.js
 ```
 
 Entry point is `assets` directory; contains `manifest.webmanifest`, `index.html`, `script.js` and any other scripts or resources to be bundled. 
@@ -104,6 +110,25 @@ await esbuild.build({
 // "" + "/path" and "/path" + "": Deno-specific workaround to avoid module not found error
  const { default: bundleIsolatedWebApp } = await import(dynamicImport);
 ```
+
+### Compile `index.js` to a standalone executable
+
+#### Deno 
+Note, this is possible using Deno without `node_modules` in the current directory, using the import map in `deno.json`. `deno` creates a `node_modules` folder, fetches and populate with the compile dependencies `@types/node`, `undici-types`, then compiles and outputs the self-contained executable, 96.8 MB (after `strip deno`).
+
+```
+ deno compile -A --unstable --output deno_webbundle ./index.js
+
+```
+#### Bun
+
+When `node_modules` populated with dependencies, creates a 89.1 MB (after `strip bun`) standalone binary.
+
+```
+bun build ./index.js --compile --outfile=bun_webbundle
+
+```
+
 
 ### TODO
 
