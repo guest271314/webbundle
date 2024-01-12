@@ -117,7 +117,7 @@ await esbuild.build({
 Note, this is possible using Deno without `node_modules` in the current directory, using the import map in `deno.json`. `deno` creates a `node_modules` folder, fetches and populate with the compile dependencies `@types/node`, `undici-types`, then compiles and outputs the self-contained executable, 96.8 MB (after `strip deno`).
 
 ```
- deno compile -A --unstable --output deno_webbundle ./index.js
+ deno compile -A --output deno_webbundle ./index.js
 
 ```
 #### Bun
