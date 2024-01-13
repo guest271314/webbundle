@@ -27,7 +27,7 @@ deno run -A deno_install.js
 deno run -A --unstable-byonm --config=deno.json index.js
 ```
 
-### Web Bundle source files
+### Signed Web Bundle/Isolated Web App source files
 
 Entry point is `assets` directory; contains `manifest.webmanifest`, `index.html`, `script.js` and any other scripts or resources to be bundled. 
 
