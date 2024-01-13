@@ -1,9 +1,9 @@
 ### webbundle
 Web Bundle and Isolated Web App experiments
 
-### Usage
+### Install dependencies
 
-Fetch dependencies
+#### Fetch dependencies using `package.json`
 
 ```
 bun install
@@ -15,17 +15,19 @@ or
 npm install
 ```
 
-or to create and populate `node_modules` folder with dependencies
+#### Programmatically create `node_modules` folder and add `wbn-sign-webcrypto` to the folder from the GitHub repository
 
 ```
 deno run -A deno_install.js
 ```
 
-or to use network imports from esm.sh and github.com
+#### Dynamically fetch dependencies without creating a `node_modules` folder and create the `.swbn` file and IWA.
 
 ```
-deno run -A index.js
+deno run -A --unstable-byonm --config=deno.json index.js
 ```
+
+### Web Bundle source files
 
 Entry point is `assets` directory; contains `manifest.webmanifest`, `index.html`, `script.js` and any other scripts or resources to be bundled. 
 
