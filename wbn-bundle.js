@@ -1,16 +1,16 @@
 // @bun
 // src/index.ts
-import {BundleBuilder as BundleBuilder2} from "wbn";
+import { BundleBuilder as BundleBuilder2 } from "wbn";
 
 // shared/utils.ts
-import * as fs from "fs";
-import * as path from "path";
+// import * as fs from "fs";
+// import * as path from "path";
 import mime from "mime";
-import {combineHeadersForUrl} from "wbn";
-import {IntegrityBlockSigner, WebBundleId} from "wbn-sign-webcrypto";
+import { combineHeadersForUrl } from "wbn";
+import { IntegrityBlockSigner, WebBundleId } from "wbn-sign-webcrypto";
 
 // shared/iwa-headers.ts
-var headerNamesToLowerCase = function(headers) {
+var headerNamesToLowerCase = function (headers) {
   const lowerCaseHeaders = {};
   for (const [headerName, headerValue] of Object.entries(headers)) {
     lowerCaseHeaders[headerName.toLowerCase()] = headerValue;
@@ -19,15 +19,30 @@ var headerNamesToLowerCase = function(headers) {
 };
 function checkAndAddIwaHeaders(headers) {
   const lowerCaseHeaders = headerNamesToLowerCase(headers);
-  for (const [iwaHeaderName, iwaHeaderValue] of Object.entries(iwaHeaderDefaults)) {
+  for (
+    const [iwaHeaderName, iwaHeaderValue] of Object.entries(iwaHeaderDefaults)
+  ) {
     if (!lowerCaseHeaders[iwaHeaderName]) {
-      console.log(`For Isolated Web Apps, ${iwaHeaderName} header was automatically set to ${iwaHeaderValue}. ${ifNotIwaMsg}`);
+      console.log(
+        `For Isolated Web Apps, ${iwaHeaderName} header was automatically set to ${iwaHeaderValue}. ${ifNotIwaMsg}`,
+      );
       headers[iwaHeaderName] = iwaHeaderValue;
     }
   }
-  for (const [iwaHeaderName, iwaHeaderValue] of Object.entries(invariableIwaHeaders)) {
-    if (lowerCaseHeaders[iwaHeaderName] && lowerCaseHeaders[iwaHeaderName].toLowerCase() !== iwaHeaderValue) {
-      throw new Error(`For Isolated Web Apps ${iwaHeaderName} should be ${iwaHeaderValue}. Now it is ${headers[iwaHeaderName]}. ${ifNotIwaMsg}`);
+  for (
+    const [iwaHeaderName, iwaHeaderValue] of Object.entries(
+      invariableIwaHeaders,
+    )
+  ) {
+    if (
+      lowerCaseHeaders[iwaHeaderName] &&
+      lowerCaseHeaders[iwaHeaderName].toLowerCase() !== iwaHeaderValue
+    ) {
+      throw new Error(
+        `For Isolated Web Apps ${iwaHeaderName} should be ${iwaHeaderValue}. Now it is ${
+          headers[iwaHeaderName]
+        }. ${ifNotIwaMsg}`,
+      );
     }
   }
 }
@@ -47,49 +62,135 @@ function checkAndAddIwaHeaders(headers) {
  * limitations under the License.
  */
 var coep = Object.freeze({
-  "cross-origin-embedder-policy": "require-corp"
+  "cross-origin-embedder-policy": "require-corp",
 });
 var coop = Object.freeze({
-  "cross-origin-opener-policy": "same-origin"
+  "cross-origin-opener-policy": "same-origin",
 });
 var corp = Object.freeze({
-  "cross-origin-resource-policy": "same-origin"
+  "cross-origin-resource-policy": "same-origin",
 });
 var CSP_HEADER_NAME = "content-security-policy";
 var csp = Object.freeze({
-  [CSP_HEADER_NAME]: "base-uri 'none'; default-src 'self'; object-src 'none'; frame-src 'self' https: blob: data:; connect-src 'self' https: wss:; script-src 'self' 'wasm-unsafe-eval'; img-src 'self' https: blob: data:; media-src 'self' https: blob: data:; font-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; require-trusted-types-for 'script'; frame-ancestors 'self';"
+  [CSP_HEADER_NAME]:
+    "base-uri 'none'; default-src 'self'; object-src 'none'; frame-src 'self' https: blob: data:; connect-src 'self' https: wss:; script-src 'self' 'wasm-unsafe-eval'; img-src 'self' https: blob: data:; media-src 'self' https: blob: data:; font-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; require-trusted-types-for 'script'; frame-ancestors 'self';",
 });
 var invariableIwaHeaders = Object.freeze({
   ...coep,
   ...coop,
-  ...corp
+  ...corp,
 });
 var iwaHeaderDefaults = Object.freeze({
   ...csp,
-  ...invariableIwaHeaders
+  ...invariableIwaHeaders,
 });
-var ifNotIwaMsg = "If you are bundling a non-IWA, set `integrityBlockSign: { isIwa: false }` in the plugin's configuration.";
+var ifNotIwaMsg =
+  "If you are bundling a non-IWA, set `integrityBlockSign: { isIwa: false }` in the plugin's configuration.";
 
 // shared/utils.ts
-function addAsset(builder, baseURL, relativeAssetPath, assetContentBuffer, pluginOptions) {
-  const parsedAssetPath = path.parse(relativeAssetPath);
-  const isIndexHtmlFile = parsedAssetPath.base === "index.html";
-  const shouldCheckIwaHeaders = typeof pluginOptions.headerOverride === "function" && "integrityBlockSign" in pluginOptions && pluginOptions.integrityBlockSign.isIwa;
+function addAsset(
+  builder,
+  baseURL,
+  relativeAssetPath,
+  assetContentBuffer,
+  pluginOptions,
+) {
+  console.log({ relativeAssetPath, assetContentBuffer });
+  const parsedAssetPath = new URL(import.meta.resolve("./" + relativeAssetPath))
+    .pathname.slice(1);
+  console.log({ parsedAssetPath });
+  const isIndexHtmlFile = parsedAssetPath === "index.html";
+  const shouldCheckIwaHeaders =
+    typeof pluginOptions.headerOverride === "function" &&
+    "integrityBlockSign" in pluginOptions &&
+    pluginOptions.integrityBlockSign.isIwa;
   if (isIndexHtmlFile) {
-    const combinedIndexHeaders = combineHeadersForUrl({ Location: "./" }, pluginOptions.headerOverride, baseURL + relativeAssetPath);
-    if (shouldCheckIwaHeaders)
+    const combinedIndexHeaders = combineHeadersForUrl(
+      { Location: "./" },
+      pluginOptions.headerOverride,
+      baseURL + relativeAssetPath,
+    );
+    if (shouldCheckIwaHeaders) {
       checkAndAddIwaHeaders(combinedIndexHeaders);
-    builder.addExchange(baseURL + relativeAssetPath, 301, combinedIndexHeaders, "");
+    }
+    builder.addExchange(
+      baseURL + relativeAssetPath,
+      301,
+      combinedIndexHeaders,
+      "",
+    );
   }
-  const baseURLWithAssetPath = baseURL + (isIndexHtmlFile ? parsedAssetPath.dir : relativeAssetPath);
-  const combinedHeaders = combineHeadersForUrl({
-    "Content-Type": mime.getType(relativeAssetPath) || "application/octet-stream"
-  }, pluginOptions.headerOverride, baseURLWithAssetPath);
-  if (shouldCheckIwaHeaders)
+  const baseURLWithAssetPath = baseURL +
+    (isIndexHtmlFile ? parsedAssetPath.dir : relativeAssetPath);
+  const combinedHeaders = combineHeadersForUrl(
+    {
+      "Content-Type": mime.getType(relativeAssetPath) ||
+        "application/octet-stream",
+    },
+    pluginOptions.headerOverride,
+    baseURLWithAssetPath,
+  );
+  if (shouldCheckIwaHeaders) {
     checkAndAddIwaHeaders(combinedHeaders);
-  builder.addExchange(baseURLWithAssetPath, 200, combinedHeaders, assetContentBuffer);
+  }
+  builder.addExchange(
+    baseURLWithAssetPath,
+    200,
+    combinedHeaders,
+    assetContentBuffer,
+  );
 }
-function addFilesRecursively(builder, baseURL, dir, pluginOptions, recPath = "") {
+function addFilesRecursively(
+  builder,
+  baseURL,
+  dir,
+  pluginOptions,
+  recPath = "",
+) {
+  console.log({ baseURL, dir, pluginOptions, recPath });
+  const fileName = "index.html";
+  const fileContent = new TextEncoder().encode(`<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="manifest" href="manifest.webmanifest">
+</head>
+
+<body style="white-space:pre;font-family:monospace;">
+Browser test
+</body>
+
+</html>`);
+  addAsset(builder, baseURL, recPath + fileName, fileContent, pluginOptions);
+  const manifest = `{
+  "id": "/",
+  "short_name": "Browser SWBN in IWA",
+  "name": "Browser Signed Web Bundle in Isolated Web App",
+  "version": "0.0.0",
+  "icons": [{
+    "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAACQCAYAAADnRuK4AAAAAXNSR0IArs4c6QAAAmxJREFUeF7t0rENAAAMwrDy/9M9IqvZWSLvTIFQYOHrqsABBEEqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzOADGQCgCU8jkDxEAqAFDK5wwQA6kAQCmfM0AMpAIApXzODzTLAJEg2OWPAAAAAElFTkSuQmCC",
+    "sizes": "144x144",
+    "type": "image/png"
+  }],
+  "start_url": "/",
+  "display": "minimal-ui",
+  "scope": "/",
+  "permissions_policy": {
+    "cross-origin-isolated": ["self"],
+    "direct-sockets": ["self"],
+    "picture-in-picture": ["*"]
+  }
+}`;
+
+  addAsset(
+    builder,
+    baseURL,
+    recPath + "manifest.webmanifest",
+    new TextEncoder().encode(manifest),
+    pluginOptions,
+  );
+  /*
   const files = fs.readdirSync(dir);
   files.sort();
   for (const fileName of files) {
@@ -101,10 +202,16 @@ function addFilesRecursively(builder, baseURL, dir, pluginOptions, recPath = "")
       addAsset(builder, baseURL, recPath + fileName, fileContent, pluginOptions);
     }
   }
+  */
 }
 async function getSignedWebBundle(webBundle, opts, infoLogger) {
-  const { signedWebBundle } = await new IntegrityBlockSigner(webBundle, opts.integrityBlockSign.strategy).sign();
-  const origin = await new WebBundleId(await opts.integrityBlockSign.strategy.getPublicKey()).serializeWithIsolatedWebAppOrigin();
+  const { signedWebBundle } = await new IntegrityBlockSigner(
+    webBundle,
+    opts.integrityBlockSign.strategy,
+  ).sign();
+  const origin = await new WebBundleId(
+    await opts.integrityBlockSign.strategy.getPublicKey(),
+  ).serializeWithIsolatedWebAppOrigin();
   infoLogger(origin);
   return signedWebBundle;
 }
@@ -125,7 +232,7 @@ async function getSignedWebBundle(webBundle, opts, infoLogger) {
  */
 
 // src/index.ts
-var infoLogger = function(text) {
+var infoLogger = function (text) {
   console.log(`${consoleLogColor.green}${text}${consoleLogColor.reset}\n`);
 };
 /*!
@@ -146,11 +253,18 @@ var infoLogger = function(text) {
 var consoleLogColor = { green: "\x1B[32m", reset: "\x1B[0m" };
 async function bundleIsolatedWebApp(opts) {
   const builder = new BundleBuilder2(opts.formatVersion);
+  console.log(builder, opts);
+
   if ("primaryURL" in opts && opts.primaryURL) {
     builder.setPrimaryURL(opts.primaryURL);
   }
   if (opts.static) {
-    addFilesRecursively(builder, opts.static.baseURL ?? opts.baseURL, opts.static.dir, opts);
+    addFilesRecursively(
+      builder,
+      opts.static.baseURL ?? opts.baseURL,
+      opts.static.dir,
+      opts,
+    );
   }
   let webBundle = builder.createBundle();
   if ("integrityBlockSign" in opts) {
@@ -158,11 +272,11 @@ async function bundleIsolatedWebApp(opts) {
   }
   return {
     fileName: opts.output,
-    source: webBundle
+    source: webBundle,
   };
+
+  //return {fileName:0, source:1}
 }
-export {
-  bundleIsolatedWebApp as default
-};
+export { bundleIsolatedWebApp as default };
 
 //# debugId=C89D2538F4A0883964756e2164756e21
