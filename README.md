@@ -24,7 +24,7 @@ deno run -A deno_install.js
 #### Dynamically fetch dependencies without creating a `node_modules` folder and create the `.swbn` file and IWA.
 
 ```
-deno run -A --unstable-byonm --config=deno.json index.js
+deno run -A --unstable-byonm --import-map=deno.json index.js
 ```
 
 ### Signed Web Bundle/Isolated Web App source files
