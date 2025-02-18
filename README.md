@@ -131,6 +131,11 @@ bun build ./index.js --compile --outfile=bun_webbundle
 
 ```
 
+## Examples
+
+- [telnet-client](https://github.com/guest271314/telnet-client)
+- [direct-sockets-http-ws-server](https://github.com/guest271314/direct-sockets-http-ws-server)
+
 
 ### TODO
 
